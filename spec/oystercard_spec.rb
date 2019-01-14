@@ -18,7 +18,18 @@ RSpec.describe Oystercard do
     expect {subject.top_up(Oystercard::MAXIMUM_BALANCE + 1)}.to raise_error "Maximum is #{Oystercard::MAXIMUM_BALANCE}, DENIED"
   end
 
-  it "Should be an Integer" do
+  it "should be an Integer" do
     expect(subject.new_balance(10)).to be_kind_of Integer
   end
+
+  it "should return an Integer" do
+    allow(subject).to receive(:balance).and_return(20)
+    expect(subject.deduct(3)).to be_kind_of Integer
+  end
+
+  it "should return a new lower balance" do
+    subject.top_up(20)
+    expect { subject.deduct 3 }.to change{ subject.balance }.by -3
+  end
+
 end
