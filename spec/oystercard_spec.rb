@@ -1,6 +1,11 @@
 require 'oystercard'
 
 RSpec.describe Oystercard do
+
+  before (:all) do
+    @entry_location = double("entry_location")
+  end
+
   context "@balance" do
     it "should return an Integer as balance" do
       expect(subject.balance).to be_kind_of(Integer)
@@ -39,12 +44,15 @@ RSpec.describe Oystercard do
       subject.instance_variable_set(:@balance, 10)
       expect { subject.touch_out }.to change { subject.balance }.by(-1)
     end
+
+    it "should set location to nil" do
+      subject.instance_variable_set(:@entry_station, @entry_location)
+      subject.touch_out
+      expect(subject.entry_station).to be_nil
+    end
   end
 
   context "#touch_in" do
-    before (:all) do
-      @entry_location = double("entry_location")
-    end
     it "sets in_journey to true" do
       subject.instance_variable_set(:@in_journey, false)
       subject.instance_variable_set(:@balance, 5)
