@@ -1,35 +1,61 @@
 require 'oystercard'
 
 RSpec.describe Oystercard do
+  context "@balance" do
+    it "should return an Integer as balance" do
+      expect(subject.balance).to be_kind_of(Integer)
+    end
+  end
+    it "should respond to top_up method with 1 argument" do
+      expect(subject).to respond_to(:top_up).with(1).argument
+    end
 
-  it "should return an Integer as balance" do
-    expect(subject.balance).to be_kind_of(Integer)
+    it "should return an Integer" do
+      expect(subject.top_up(5)).to be_kind_of Integer
+    end
+
+    it "should raise an error for maximum balance passed" do
+      expect {subject.top_up(Oystercard::MAXIMUM_BALANCE + 1)}.to raise_error "Maximum is #{Oystercard::MAXIMUM_BALANCE}, DENIED"
+    end
+
+    it "should be an Integer" do
+      expect(subject.new_balance(10)).to be_kind_of Integer
+    end
+
+    it "should return an Integer" do
+      subject.instance_variable_set(:@balance, 20)
+      expect(subject.deduct(3)).to be_kind_of Integer
+    end
+
+    it "should return a new lower balance" do
+      subject.instance_variable_set(:@balance, 20)
+      expect(subject.deduct(3)).to eq 17
+    end
+
+    it "should return a new lower balance" do
+      subject.top_up(20)
+      expect { subject.deduct 3 }.to change{ subject.balance }.by -3
+    end
+
+  context "#in_journey?" do
+    it "should return either true or false" do
+      expect(subject.in_journey?).to eq(true).or eq(false)
+    end
   end
 
-  it "should respond to top_up method with 1 argument" do
-    expect(subject).to respond_to(:top_up).with(1).argument
+context "#touch_out" do
+  it "ssets in_journey to false" do
+    subject.instance_variable_set(:@in_journey, true)
+    subject.touch_out
+    expect(subject.in_journey?).to be_falsey
   end
+end
 
-  it "should return an Integer" do
-    expect(subject.top_up(5)).to be_kind_of Integer
+context "#touch_in" do
+  it "sets in_journey to true" do
+    subject.instance_variable_set(:@in_journey, false)
+    subject.touch_in
+    expect(subject.in_journey?).to be_truthy
   end
-
-  it "should raise an error for maximum balance passed" do
-    expect {subject.top_up(Oystercard::MAXIMUM_BALANCE + 1)}.to raise_error "Maximum is #{Oystercard::MAXIMUM_BALANCE}, DENIED"
-  end
-
-  it "should be an Integer" do
-    expect(subject.new_balance(10)).to be_kind_of Integer
-  end
-
-  it "should return an Integer" do
-    allow(subject).to receive(:balance).and_return(20)
-    expect(subject.deduct(3)).to be_kind_of Integer
-  end
-
-  it "should return a new lower balance" do
-    subject.top_up(20)
-    expect { subject.deduct 3 }.to change{ subject.balance }.by -3
-  end
-
+end
 end
