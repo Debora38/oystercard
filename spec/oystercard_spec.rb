@@ -28,34 +28,41 @@ RSpec.describe Oystercard do
     end
   end
 
-context "#touch_out" do
-  it "sets in_journey to false" do
-    subject.instance_variable_set(:@in_journey, true)
-    subject.touch_out
-    expect(subject.in_journey?).to be_falsey
+  context "#touch_out" do
+    it "sets in_journey to false" do
+      subject.instance_variable_set(:@in_journey, true)
+      subject.touch_out
+      expect(subject.in_journey?).to be_falsey
+    end
+
+    it "charges minimum fare" do
+      subject.instance_variable_set(:@balance, 10)
+      expect { subject.touch_out }.to change { subject.balance }.by(-1)
+    end
   end
 
-  it "charges minimum fare" do
-    subject.instance_variable_set(:@balance, 10)
-    expect { subject.touch_out }.to change { subject.balance }.by(-1)
-  end
-end
+  context "#touch_in" do
+    before (:all) do
+      @entry_location = double("entry_location")
+    end
+    it "sets in_journey to true" do
+      subject.instance_variable_set(:@in_journey, false)
+      subject.instance_variable_set(:@balance, 5)
+      subject.touch_in(@entry_location)
+      expect(subject.in_journey?).to be_truthy
+    end
 
-context "#touch_in" do
-  it "sets in_journey to true" do
-    subject.instance_variable_set(:@in_journey, false)
-    subject.instance_variable_set(:@balance, 5)
-    subject.touch_in
-    expect(subject.in_journey?).to be_truthy
+    it "MINIMUM_FARE is £1" do
+      expect(Oystercard::MINIMUM_FARE).to eq(1)
+    end
+
+    it "raises exception at touch in if balance < MINIMUM_FARE" do
+      subject.instance_variable_set(:@balance,0)
+      expect { subject.touch_in(@entry_location) }.to raise_error("Insufficient balance!")
+    end
   end
 
-  it "MINIMUM_FARE is £1" do
-    expect(Oystercard::MINIMUM_FARE).to eq(1)
+  context "#entry_station" do
+    it { is_expected.to respond_to(:entry_station)}
   end
-
-  it "raises exception at touch in if balance < MINIMUM_FARE" do
-    subject.instance_variable_set(:@balance,0)
-    expect { subject.touch_in }.to raise_error("Insufficient balance!")
-  end
-end
 end
