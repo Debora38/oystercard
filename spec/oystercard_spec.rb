@@ -22,22 +22,6 @@ RSpec.describe Oystercard do
       expect(subject.new_balance(10)).to be_kind_of Integer
     end
 
- context "#deduct" do
-    it "should return an Integer" do
-      subject.instance_variable_set(:@balance, 20)
-      expect(subject.deduct(3)).to be_kind_of Integer
-    end
-
-    it "should return a new lower balance" do
-      subject.instance_variable_set(:@balance, 20)
-      expect(subject.deduct(3)).to eq 17
-    end
-
-    it "should return a new lower balance" do
-      subject.top_up(20)
-      expect { subject.deduct 3 }.to change{ subject.balance }.by -3
-    end
- end
   context "#in_journey?" do
     it "should return either true or false" do
       expect(subject.in_journey?).to eq(true).or eq(false)
