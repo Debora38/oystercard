@@ -34,7 +34,7 @@ RSpec.describe Oystercard do
   end
 
   context "#touch_out" do
-    it "sets in_journey to false" do
+    it "returns false for in_journey?" do
       subject.instance_variable_set(:@in_journey, true)
       subject.touch_out
       expect(subject.in_journey?).to be_falsey
@@ -53,10 +53,9 @@ RSpec.describe Oystercard do
   end
 
   context "#touch_in" do
-    it "sets in_journey to true" do
-      subject.instance_variable_set(:@in_journey, false)
+    it "should return true for in_journey?" do
+      subject.instance_variable_set(:@entry_station, @entry_location)
       subject.instance_variable_set(:@balance, 5)
-      subject.touch_in(@entry_location)
       expect(subject.in_journey?).to be_truthy
     end
 

@@ -5,9 +5,8 @@ class Oystercard
   MINIMUM_FARE = 1
   MAXIMUM_BALANCE = 90
 
-  def initialize(balance = 0, in_journey = false)
+  def initialize(balance = 0)
     @balance = balance
-    @in_journey = in_journey
     @entry_station
   end
 
@@ -21,7 +20,7 @@ class Oystercard
   end
 
   def in_journey?
-    @in_journey
+    @entry_station != nil
   end
 
   def touch_out
