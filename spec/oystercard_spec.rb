@@ -22,6 +22,7 @@ RSpec.describe Oystercard do
       expect(subject.new_balance(10)).to be_kind_of Integer
     end
 
+ context "#deduct" do
     it "should return an Integer" do
       subject.instance_variable_set(:@balance, 20)
       expect(subject.deduct(3)).to be_kind_of Integer
@@ -36,7 +37,7 @@ RSpec.describe Oystercard do
       subject.top_up(20)
       expect { subject.deduct 3 }.to change{ subject.balance }.by -3
     end
-
+ end
   context "#in_journey?" do
     it "should return either true or false" do
       expect(subject.in_journey?).to eq(true).or eq(false)
@@ -44,10 +45,15 @@ RSpec.describe Oystercard do
   end
 
 context "#touch_out" do
-  it "ssets in_journey to false" do
+  it "sets in_journey to false" do
     subject.instance_variable_set(:@in_journey, true)
     subject.touch_out
     expect(subject.in_journey?).to be_falsey
+  end
+
+  it "charges minimum fare" do
+    subject.instance_variable_set(:@balance, 10)
+    expect { subject.touch_out }.to change { subject.balance }.by(-1)
   end
 end
 
@@ -58,9 +64,11 @@ context "#touch_in" do
     subject.touch_in
     expect(subject.in_journey?).to be_truthy
   end
+
   it "MINIMUM_FARE is £1" do
     expect(Oystercard::MINIMUM_FARE).to eq(1)
   end
+
   it "raises exception at touch in if balance < MINIMUM_FARE" do
     subject.instance_variable_set(:@balance,0)
     expect { subject.touch_in }.to raise_error("Insufficient balance!")
