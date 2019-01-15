@@ -54,8 +54,16 @@ end
 context "#touch_in" do
   it "sets in_journey to true" do
     subject.instance_variable_set(:@in_journey, false)
+    subject.instance_variable_set(:@balance, 5)
     subject.touch_in
     expect(subject.in_journey?).to be_truthy
+  end
+  it "MINIMUM_FARE is £1" do
+    expect(Oystercard::MINIMUM_FARE).to eq(1)
+  end
+  it "raises exception at touch in if balance < MINIMUM_FARE" do
+    subject.instance_variable_set(:@balance,0)
+    expect { subject.touch_in }.to raise_error("Insufficient balance!")
   end
 end
 end
