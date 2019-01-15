@@ -67,6 +67,12 @@ RSpec.describe Oystercard do
       subject.instance_variable_set(:@balance,0)
       expect { subject.touch_in(@entry_location) }.to raise_error("Insufficient balance!")
     end
+
+    it "should return a value for the entry_station variable" do
+      subject.instance_variable_set(:@balance, 5)
+      subject.touch_in(@entry_location)
+      expect(subject.entry_station).not_to be_nil
+    end
   end
 
   context "#entry_station" do

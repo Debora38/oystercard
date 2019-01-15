@@ -35,7 +35,7 @@ class Oystercard
 
   def touch_in(location)
     raise ("Insufficient balance!") if enough_money?
-    @in_journey = true
+    @entry_station = location
   end
 
  private
