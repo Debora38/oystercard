@@ -4,6 +4,7 @@ RSpec.describe Oystercard do
 
   before (:all) do
     @entry_location = double("entry_location")
+    @exit_location = double("exit_location")
   end
 
   context "@balance" do
@@ -36,19 +37,31 @@ RSpec.describe Oystercard do
   context "#touch_out" do
     it "returns false for in_journey?" do
       subject.instance_variable_set(:@in_journey, true)
-      subject.touch_out
+      subject.instance_variable_set(:@balance, 5)
+      subject.touch_in(@entry_location)
+      subject.touch_out(@exit_location)
       expect(subject.in_journey?).to be_falsey
     end
 
     it "charges minimum fare" do
       subject.instance_variable_set(:@balance, 10)
-      expect { subject.touch_out }.to change { subject.balance }.by(-1)
+      subject.touch_in(@entry_location)
+      expect { subject.touch_out(@exit_location) }.to change { subject.balance }.by(-1)
     end
 
     it "should set location to nil" do
       subject.instance_variable_set(:@entry_station, @entry_location)
-      subject.touch_out
+      subject.instance_variable_set(:@balance, 5)
+      subject.touch_in(@entry_location)
+      subject.touch_out(@exit_location)
       expect(subject.entry_station).to be_nil
+    end
+
+    it "should log exit_station in the array" do
+      subject.instance_variable_set(:@balance, 5)
+      subject.touch_in(@entry_location)
+      subject.touch_out(@exit_location)
+      expect(subject.journeys).to eq [{ entry: @entry_location, exit: @exit_location}]
     end
   end
 
@@ -72,6 +85,13 @@ RSpec.describe Oystercard do
       subject.instance_variable_set(:@balance, 5)
       subject.touch_in(@entry_location)
       expect(subject.entry_station).not_to be_nil
+    end
+
+    it "should log entry_station in the array" do
+      subject.instance_variable_set(:@balance, 5)
+      @entry_location = double("entry_location")
+      subject.touch_in(@entry_location)
+      expect(subject.journeys).to eq [{ entry: @entry_location, exit: nil}]
     end
   end
 
