@@ -2,7 +2,7 @@ require 'oystercard'
 
 RSpec.describe Oystercard do
 
-  before (:all) do
+  before do
     @entry_location = double("entry_location")
     @exit_location = double("exit_location")
   end
