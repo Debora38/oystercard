@@ -27,6 +27,8 @@ class Oystercard
   def touch_out(location)
     deduct(MINIMUM_FARE)
     @journeys.last[:exit] = location
+    # if journeys.last[:exit] == nil then = location & MIN FARE
+    # else PENALTY
     @entry_station = nil
   end
 
@@ -37,6 +39,8 @@ class Oystercard
   def touch_in(location)
     raise ("Insufficient balance!") if enough_money?
     @journeys.push({entry: location, exit: nil})
+    # if journeys.last[:exit] != nil then location
+    # else PENALTY
     @entry_station = location
   end
 
