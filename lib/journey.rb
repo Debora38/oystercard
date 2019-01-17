@@ -7,7 +7,7 @@ class Journey
   end
 
   def log_entry(location)
-    @journeys.push({entry: location, exit: nil})
+    @journeys.push({ entry: location, exit: nil })
   end
 
   def log_exit(location)

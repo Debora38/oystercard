@@ -6,8 +6,7 @@ RSpec.describe Journey do
     @station = double('station')
   end
 
- describe "#log_entry"
-
+  describe "#log_entry"
   it "should return an entry station" do
     expect(subject.log_entry(@station)).to be_kind_of Array
   end
@@ -21,5 +20,4 @@ RSpec.describe Journey do
     subject.log_exit(@station)
     expect(subject.journeys.last[:exit]).to eq @station
   end
-
- end
+end

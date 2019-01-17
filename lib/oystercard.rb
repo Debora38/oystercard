@@ -4,17 +4,18 @@ class Oystercard
 
   attr_accessor :balance
   attr_reader :journey
-  
+
   MINIMUM_FARE = 1
   MAXIMUM_BALANCE = 90
 
-  def initialize(balance = 0)
+  def initialize(balance = 0, journey = Journey.new)
     @balance = balance
-    @journey = Journey.new
+    @journey = journey
   end
 
   def top_up(amount)
-    raise "Maximum is #{Oystercard::MAXIMUM_BALANCE}, DENIED" if new_balance(amount) > MAXIMUM_BALANCE
+    raise "Max is #{MAXIMUM_BALANCE}" if new_balance(amount) > MAXIMUM_BALANCE
+
     new_balance(amount)
   end
 
@@ -34,7 +35,8 @@ class Oystercard
   end
 
   def touch_in(location)
-    raise ("Insufficient balance!") if enough_money?
+    raise "Insufficient balance!" if enough_money?
+
     @journey.log_entry(location)
     # if journeys.last[:exit] != nil then location
     # else PENALTY
