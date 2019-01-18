@@ -82,5 +82,29 @@ RSpec.describe Oystercard do
         expect { subject.touch_in(@entry_location) }.to change { subject.balance }.by(0)
       end
     end
+    describe "#touch_out" do
+      it "double touch_out should charge PENALTY_FARE" do
+        subject.instance_variable_set(:@balance, 10)
+        subject.touch_in(@entry_location)
+        subject.touch_out(@exit_location)
+        expect { subject.touch_out(@exit_location) }.to change { subject.balance }.by(-Oystercard::PENALTY_FARE)
+      end
+
+      it "touch_out should only charge MINIMUM_FARE if the journey was touched in" do
+        subject.instance_variable_set(:@balance, 10)
+        subject.touch_in(@entry_location)
+        expect { subject.touch_out(@exit_location) }.to change { subject.balance }.by(-Oystercard::MINIMUM_FARE)
+      end
+
+      it "touch_out of a new card should charge PENALTY_FARE" do
+        subject.instance_variable_set(:@balance, 10)
+        expect { subject.touch_out(@entry_location) }.to change { subject.balance }.by(-Oystercard::PENALTY_FARE)
+      end
+
+      it "double touch_out should enter a new hash with entry: nil" do
+        subject.touch_out(@exit_location)
+        expect(subject.touch_out(@exit_location))
+      end
+    end
   end
 end

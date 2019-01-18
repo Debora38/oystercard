@@ -25,10 +25,13 @@ class Oystercard
   end
 
   def touch_out(location)
-    deduct(MINIMUM_FARE)
-    @journey.log_exit(location)
-    # if journeys.last[:exit] == nil then = location & MIN FARE
-    # else PENALTY
+    if @journey.journeys.empty? || @journey.journeys.last[:exit] != nil
+      @journey.special_log_exit(location)
+      deduct(PENALTY_FARE)
+    else
+      deduct(MINIMUM_FARE)
+      @journey.log_exit(location)
+    end
   end
 
   def enough_money?
@@ -44,7 +47,7 @@ class Oystercard
      @journey.journeys.last(2)[0][:exit].nil?
   end
 
- private
+# private
 
   def deduct(amount)
     @balance -= amount

@@ -13,4 +13,8 @@ class Journey
   def log_exit(location)
     @journeys.last[:exit] = location
   end
+
+  def special_log_exit(location)
+    @journeys.push({ entry: nil, exit: location })
+  end
 end
