@@ -17,8 +17,8 @@ RSpec.describe Oystercard do
     expect(subject).to respond_to(:top_up).with(1).argument
   end
 
-  it "should return an Integer" do
-    expect(subject.top_up(5)).to be_kind_of Integer
+  it "should return the topped up amount" do
+    expect(subject.top_up(5)).to eq 5
   end
 
   it "should raise an error for maximum balance passed" do
@@ -59,6 +59,14 @@ RSpec.describe Oystercard do
       @entry_location = double("entry_location")
       subject.touch_in(@entry_location)
       expect(subject.journey.journeys).to eq [{ entry: @entry_location, exit: nil }]
+    end
+  end
+
+  context "#fare" do
+    it "double touch_in should charge penalty fare" do
+      subject.instance_variable_set(:@balance, 10)
+      subject.touch_in(@entry_location)
+      expect { subject.touch_in(@entry_location) }.to change{ subject.balance }.by(-Oystercard::PENALTY_FARE)
     end
   end
 end
