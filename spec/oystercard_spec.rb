@@ -63,10 +63,24 @@ RSpec.describe Oystercard do
   end
 
   context "#fare" do
-    it "double touch_in should charge penalty fare" do
-      subject.instance_variable_set(:@balance, 10)
-      subject.touch_in(@entry_location)
-      expect { subject.touch_in(@entry_location) }.to change{ subject.balance }.by(-Oystercard::PENALTY_FARE)
+    describe "#touch_in" do
+      it "double touch_in should charge penalty fare" do
+        subject.instance_variable_set(:@balance, 10)
+        subject.touch_in(@entry_location)
+        expect { subject.touch_in(@entry_location) }.to change { subject.balance }.by(-Oystercard::PENALTY_FARE)
+      end
+
+      it "touch_in of a used card should not charge PENALTY_FARE if previous journey was touched out" do
+        subject.instance_variable_set(:@balance, 10)
+        subject.touch_in(@entry_location)
+        subject.touch_out(@exit_location)
+        expect { subject.touch_in(@entry_location) }.to change { subject.balance }.by(0)
+      end
+
+      it "first touch_in of a new card should not charge PENALTY_FARE" do
+        subject.instance_variable_set(:@balance, 10)
+        expect { subject.touch_in(@entry_location) }.to change { subject.balance }.by(0)
+      end
     end
   end
 end

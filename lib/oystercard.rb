@@ -40,7 +40,8 @@ class Oystercard
 
     @journey.log_entry(location)
 
-#    deduct(PENALTY_FARE) if @journey.journeys.last[:exit] == nil
+    deduct(PENALTY_FARE) if @journey.journeys.length > 1 &&
+     @journey.journeys.last(2)[0][:exit].nil?
   end
 
  private
